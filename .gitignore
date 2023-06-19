@@ -22,5 +22,6 @@
 /minigzipsh
 /zlib.pc
 /configure.log
+/build
 
 .DS_Store
