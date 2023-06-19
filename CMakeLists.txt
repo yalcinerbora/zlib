@@ -3,7 +3,7 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 project(zlib C)
 
-set(VERSION "1.2.13")
+set(ZLIB_VERSION "1.2.13")
 
 include(CheckTypeSize)
 include(CheckFunctionExists)
@@ -213,13 +213,13 @@ if(ZLIB_INSTALL)
     set(ZLIB_CONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/zlib)
 
     # generate the config file that includes the exports
-    configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/zlibConfig.cmake.in
-        "${CMAKE_CURRENT_BINARY_DIR}/zlibConfig.cmake"
+    configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/ZLIBConfig.cmake.in
+        "${CMAKE_CURRENT_BINARY_DIR}/ZLIBConfig.cmake"
         INSTALL_DESTINATION ${ZLIB_CONFIG_DIR}
         NO_CHECK_REQUIRED_COMPONENTS_MACRO
     )
     write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/ZLIBConfigVersion.cmake"
-                                     VERSION ${VERSION}
+                                     VERSION ${ZLIB_VERSION}
                                      COMPATIBILITY SameMajorVersion)
 
     install(FILES
@@ -229,7 +229,7 @@ if(ZLIB_INSTALL)
 
     install(EXPORT ZLIBTargets
             NAMESPACE ZLIB::
-            #FILE ZLIBTargets.cmake
+            FILE ZLIBTargets.cmake
             DESTINATION ${ZLIB_CONFIG_DIR})
 
     # TODO: Probably this is not standart
