@@ -150,11 +150,11 @@ if(MINGW)
 endif(MINGW)
 
 if(ZLIB_BUILD_SHARED)
-    add_library(zlib SHARED)
-    target_sources(zlib PRIVATE ${ZLIB_DLL_SRCS})
+    add_library(ZLIB SHARED)
+    target_sources(ZLIB PRIVATE ${ZLIB_DLL_SRCS})
 
-    set_target_properties(zlib PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
-    set_target_properties(zlib PROPERTIES SOVERSION 1)
+    set_target_properties(ZLIB PROPERTIES DEFINE_SYMBOL ZLIB_DLL)
+    set_target_properties(ZLIB PROPERTIES SOVERSION 1)
     if(NOT CYGWIN)
         # This property causes shared libraries on Linux to have the full version
         # encoded into their final filename.  We disable this on Cygwin because
@@ -163,42 +163,43 @@ if(ZLIB_BUILD_SHARED)
         #
         # This has no effect with MSVC, on that platform the version info for
         # the DLL comes from the resource file win32/zlib1.rc
-        set_target_properties(zlib PROPERTIES VERSION ${ZLIB_FULL_VERSION})
+        set_target_properties(ZLIB PROPERTIES VERSION ${ZLIB_FULL_VERSION})
     endif()
 
     if(UNIX AND NOT APPLE)
-        set_target_properties(zlib PROPERTIES LINK_FLAGS "-Wl,--version-script,\"${CMAKE_CURRENT_SOURCE_DIR}/zlib.map\"")
+        set_target_properties(ZLIB PROPERTIES LINK_FLAGS "-Wl,--version-script,\"${CMAKE_CURRENT_SOURCE_DIR}/zlib.map\"")
     endif()
 
 else()
-    add_library(zlib STATIC)
+    add_library(ZLIB STATIC)
 endif()
 
-target_sources(zlib PRIVATE ${ZLIB_SRCS})
-target_sources(zlib
+target_sources(ZLIB PRIVATE ${ZLIB_SRCS})
+target_sources(ZLIB
                 PUBLIC FILE_SET HEADERS
                 BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
                 FILES ${ZLIB_PUBLIC_HDRS})
-target_sources(zlib PRIVATE ${ZLIB_PRIVATE_HDRS})
-target_sources(zlib PRIVATE ${ZLIB_GENERATED_HDRS})
+target_sources(ZLIB PRIVATE ${ZLIB_PRIVATE_HDRS})
+target_sources(ZLIB PRIVATE ${ZLIB_GENERATED_HDRS})
 
 
 if(UNIX)
     # On unix-like platforms the library is almost always called libz
-   set_target_properties(zlib PROPERTIES OUTPUT_NAME z)
+   set_target_properties(ZLIB PROPERTIES OUTPUT_NAME z)
 elseif(ZLIB_BUILD_SHARED AND WIN32)
     # Creates zlib1.dll when building shared library version
-    set_target_properties(zlib PROPERTIES SUFFIX "1.dll")
+    set_target_properties(ZLIB PROPERTIES SUFFIX "1.dll")
 endif()
 
+add_library(ZLIB::ZLIB ALIAS ZLIB)
 
 #============================================================================
 # Installation
 #============================================================================
 if(ZLIB_INSTALL)
 
-    install(TARGETS zlib
-            EXPORT zlibTargets
+    install(TARGETS ZLIB
+            EXPORT ZLIBTargets
             DESTINATION ${CMAKE_INSTALL_LIBDIR}
             FILE_SET HEADERS
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zlib)
@@ -217,31 +218,22 @@ if(ZLIB_INSTALL)
         INSTALL_DESTINATION ${ZLIB_CONFIG_DIR}
         NO_CHECK_REQUIRED_COMPONENTS_MACRO
     )
+    write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/ZLIBConfigVersion.cmake"
+                                     VERSION ${VERSION}
+                                     COMPATIBILITY SameMajorVersion)
 
-    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/zlibConfig.cmake"
+    install(FILES
+            "${CMAKE_CURRENT_BINARY_DIR}/ZLIBConfig.cmake"
+            "${CMAKE_CURRENT_BINARY_DIR}/ZLIBConfigVersion.cmake"
             DESTINATION ${ZLIB_CONFIG_DIR})
 
-    install(EXPORT zlibTargets
-            FILE zlibTargets.cmake
+    install(EXPORT ZLIBTargets
+            NAMESPACE ZLIB::
+            #FILE ZLIBTargets.cmake
             DESTINATION ${ZLIB_CONFIG_DIR})
 
     # TODO: Probably this is not standart
     install(FILES ${ZLIB_PC} DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
-
-# if(NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL )
-#     install(TARGETS zlib zlibstatic
-#         RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-#         ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-#         LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
-# endif()
-# if(NOT SKIP_INSTALL_HEADERS AND NOT SKIP_INSTALL_ALL )
-#     install(FILES ${ZLIB_PUBLIC_HDRS} DESTINATION "${INSTALL_INC_DIR}")
-# endif()
-# if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
-#     install(FILES zlib.3 DESTINATION "${INSTALL_MAN_DIR}/man3")
-# endif()
-# if(NOT SKIP_INSTALL_FILES AND NOT SKIP_INSTALL_ALL )
-#     install(FILES ${ZLIB_PC} DESTINATION "${INSTALL_PKGCONFIG_DIR}")
 endif()
 
 #============================================================================
