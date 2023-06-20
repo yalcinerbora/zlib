@@ -213,7 +213,7 @@ if(ZLIB_INSTALL)
     set(ZLIB_CONFIG_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/zlib)
 
     # generate the config file that includes the exports
-    configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/ZLIBConfig.cmake.in
+    configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/zlibConfig.cmake.in
         "${CMAKE_CURRENT_BINARY_DIR}/ZLIBConfig.cmake"
         INSTALL_DESTINATION ${ZLIB_CONFIG_DIR}
         NO_CHECK_REQUIRED_COMPONENTS_MACRO
